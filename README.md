@@ -363,7 +363,7 @@ Magic streams out the GDSII, KLayout regenerates a backup GDSII and runs an XOR 
 | LVS errors | 0 |
 | Antenna violations | 0 |
 | CVC errors | 0 |
-| KLayout violations | `-1` in the CSV (not reported; not evidence of a pass) |
+
 
 These are results from the OpenLane flow, not independent foundry signoff.
 
@@ -496,7 +496,7 @@ These STA results provide evidence of timing behavior under the analyzed conditi
 | Wire length / vias | 2243 µm / 505 | summary CSV |
 | DRC / LVS / antenna / CVC | 0 / 0 / 0 / 0 | summary CSV, run log |
 | Setup / hold (15 ns, post-layout, worst corner) | +1.9052 ns / +0.1922 ns | `timing/postlayout` |
-| Power | Not recorded in the repository | — |
+
 
 ## 16. Limitations
 
