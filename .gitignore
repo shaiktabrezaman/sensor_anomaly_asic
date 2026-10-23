@@ -1,0 +1,9 @@
+# Ignore OpenLane intermediate and run files
+openlane/runs/
+# Ignore simulation binaries and waveforms
+*.vvp
+*.vcd
+*.fst
+# Ignore python cache
+__pycache__/
+*.pyc

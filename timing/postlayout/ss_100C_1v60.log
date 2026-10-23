@@ -1,0 +1,14 @@
+Warning: /pdks/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__ss_100C_1v60.lib line 32, default_operating_condition ss_100C_1v60 not found.
+Warning: /project/openlane/runs/sensor_run2/results/synthesis/sensor_anomaly_detector.synthesis_preroute.v line 275, module sky130_fd_sc_hd__tapvpwrvgnd_1 not found.  Creating black box for PHY_56.
+Warning: /project/openlane/runs/sensor_run2/results/synthesis/sensor_anomaly_detector.synthesis_preroute.v line 426, module sky130_fd_sc_hd__fill_1 not found.  Creating black box for FILLER_0_28.
+Warning: /project/openlane/runs/sensor_run2/results/synthesis/sensor_anomaly_detector.synthesis_preroute.v line 468, module sky130_fd_sc_hd__fill_2 not found.  Creating black box for FILLER_2_27.
+----- SETUP (max) -----
+Startpoint                           Endpoint                                 Slack
+----------------------------------------------------------------------------------
+_101_/Q (sky130_fd_sc_hd__dfxtp_2)   _100_/D (sky130_fd_sc_hd__dfxtp_2)     11.4660
+
+----- HOLD (min) -----
+Startpoint                           Endpoint                                 Slack
+----------------------------------------------------------------------------------
+_101_/Q (sky130_fd_sc_hd__dfxtp_2)   _101_/D (sky130_fd_sc_hd__dfxtp_2)      0.7981
+

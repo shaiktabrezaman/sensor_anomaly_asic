@@ -1,0 +1,11 @@
+Warning: /pdks/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__ss_100C_1v40.lib line 32, default_operating_condition ss_100C_1v40 not found.
+----- SETUP (max) -----
+Startpoint                           Endpoint                                 Slack
+----------------------------------------------------------------------------------
+_101_/Q (sky130_fd_sc_hd__dfxtp_2)   _100_/D (sky130_fd_sc_hd__dfxtp_2)     10.0176
+
+----- HOLD (min) -----
+Startpoint                           Endpoint                                 Slack
+----------------------------------------------------------------------------------
+_101_/Q (sky130_fd_sc_hd__dfxtp_2)   _101_/D (sky130_fd_sc_hd__dfxtp_2)      1.1785
+

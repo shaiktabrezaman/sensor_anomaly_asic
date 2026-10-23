@@ -1,0 +1,11 @@
+Warning: /pdks/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__ff_n40C_1v65.lib line 31, default_operating_condition ff_n40C_1v65 not found.
+----- SETUP (max) -----
+Startpoint                           Endpoint                                 Slack
+----------------------------------------------------------------------------------
+_101_/Q (sky130_fd_sc_hd__dfxtp_2)   _100_/D (sky130_fd_sc_hd__dfxtp_2)     13.5789
+
+----- HOLD (min) -----
+Startpoint                           Endpoint                                 Slack
+----------------------------------------------------------------------------------
+_101_/Q (sky130_fd_sc_hd__dfxtp_2)   _101_/D (sky130_fd_sc_hd__dfxtp_2)      0.2801
+
