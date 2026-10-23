@@ -2,6 +2,9 @@
 
 A compact sequential digital circuit that flags *persistent* abnormal sensor readings, taken from Verilog RTL through simulation, synthesis, gate-level simulation, physical design and timing analysis to a GDSII layout on SkyWater SKY130A.
 
+<img width="1672" height="941" alt="Persistence-Based Structural Monitoring ASIC" src="https://github.com/user-attachments/assets/760b3ae9-b0f4-49dc-9152-960a758fe5c4" />
+
+
 ## Table of Contents
 1. [Project Overview](#1-project-overview)
 2. [Problem Statement and Motivation](#2-problem-statement-and-motivation)
