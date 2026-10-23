@@ -154,6 +154,8 @@ sensor_anomaly_asic/
 ├── timing/
 │   ├── prelayout/   postlayout/  # one OpenSTA log per PVT corner (16 each)
 │   └── run_sta.tcl
+├── video_presentation/
+│   └── README.md
 └── README.md
 ```
 
