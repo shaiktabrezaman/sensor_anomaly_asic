@@ -325,29 +325,29 @@ The OpenLane log warns that the core area is too small for the default power gri
 ### 13.2 Floorplanning
 Defines the 100 µm × 100 µm die and core, places the I/O pins according to `pin_order.cfg`, and inserts tap and end-cap cells (146 fixed cells in the placement log) before the power grid is generated.
 
-<p align="center"><img src="evidence/screenshots/01_floorplan.png" width="1536"><br><em>Figure 8: Floorplan.</em></p>
+<p align="center"><img src="evidence/screenshots/01_floorplan.png" width="900"><br><em>Figure 8: Floorplan.</em></p>
 
 ### 13.3 Placement
 Global placement positions the 56 synthesized cells, followed by resizer optimization and detailed placement. OpenLane reports 9 % placement utilization.
 
-<p align="center"><img src="evidence/screenshots/02_placement.png" width="1536"><br><em>Figure 9: Standard-cell placement.</em></p>
+<p align="center"><img src="evidence/screenshots/02_placement.png" width="900"><br><em>Figure 9: Standard-cell placement.</em></p>
 
 ### 13.4 Clock tree synthesis
 TritonCTS builds the clock distribution for net `clk` to the six flip-flops, followed by clock-net wire repair and resizer timing optimization.
 
-<p align="center"><img src="evidence/screenshots/03_cts.png" width="1536"><br><em>Figure 10: Layout after clock tree synthesis.</em></p>
+<p align="center"><img src="evidence/screenshots/03_cts.png" width="900"><br><em>Figure 10: Layout after clock tree synthesis.</em></p>
 
 ### 13.5 Routing
 Global routing (FastRoute) is followed by fill insertion and detailed routing (TritonRoute), which reports no DRC violations. SPEF parasitics are then extracted for post-layout STA. The summary report lists 2243 µm of wire and 505 vias.
 
-<p align="center"><img src="evidence/screenshots/04_routing.png" width="1536"><br><em>Figure 11: Routed design.</em></p>
+<p align="center"><img src="evidence/screenshots/04_routing.png" width="900"><br><em>Figure 11: Routed design.</em></p>
 
 ### 13.6 Final layout and GDSII
 Magic streams out the GDSII, KLayout regenerates a backup GDSII and runs an XOR comparison, and the flow then runs LVS, Magic DRC, antenna and CVC checks. The layout is in [`results/sensor_anomaly_detector.gds`](results/sensor_anomaly_detector.gds).
 
-<p align="center"><img src="evidence/screenshots/05_final_layout_klayout.png" width="1536"><br><em>Figure 12: Final layout in KLayout.</em></p>
+<p align="center"><img src="evidence/screenshots/05_final_layout_klayout.png" width="900"><br><em>Figure 12: Final layout in KLayout.</em></p>
 
-<p align="center"><img src="evidence/screenshots/06_final_layout_magic.png" width="1536"><br><em>Figure 13: Final layout in Magic.</em></p>
+<p align="center"><img src="evidence/screenshots/06_final_layout_magic.png" width="900"><br><em>Figure 13: Final layout in Magic.</em></p>
 
 ### 13.7 Physical verification (reported by the flow, run `sensor_run2`)
 
@@ -362,49 +362,122 @@ Magic streams out the GDSII, KLayout regenerates a backup GDSII and runs an XOR 
 
 These are results from the OpenLane flow, not independent foundry signoff.
 
-## 14. Static Timing Analysis
+## 14. Static Timing Analysis 
 
-[`timing/run_sta.tcl`](timing/run_sta.tcl) loads a corner's Liberty file, the netlist, the SDC and (post-layout only) the SPEF, then runs `report_checks` for max (setup) and min (hold) paths in summary format. Logs for 16 PVT corners are in `timing/prelayout/` and `timing/postlayout/`; the exact wrapper that set the environment variables per corner is not stored in the repository.
+Static Timing Analysis (STA) was performed to evaluate the setup and hold timing of the design across 16 process, voltage, and temperature (PVT) corners. This section focuses on the **15 ns clock-period analysis**, which corresponds to the configured OpenLane implementation.
 
-- **Pre-layout:** no SPEF parasitics. The post-layout logs reference the powered pre-route netlist, which contains physical cells; the pre-layout logs show no such cells, so the netlist file used is not recorded in the repository.
-- **Post-layout:** with `sensor_anomaly_detector.spef`.
-- **Slack:** required time minus arrival time. Positive means the check passes under the SDC.
-- **WNS (Worst Negative Slack):** the most negative slack among violating endpoints (0 or "none" when all slack is positive). **TNS (Total Negative Slack):** the sum of negative slacks over all violating endpoints. The summary logs list only the single worst path per check per corner, so TNS cannot be derived from them. OpenLane's own summary (`final_summary_report.csv`, 15 ns) reports WNS = TNS = 0.0 at all stages.
+The analysis includes:
 
-### 14.1 15 ns clock (matches `config.tcl` and the SDC)
+- **Pre-layout STA:** Timing analysis without extracted layout parasitics (SPEF).
+- **Post-layout STA:** Timing analysis using the extracted parasitics from the implemented layout.
+- **Setup timing:** Checks whether data arrives before the required capture time.
+- **Hold timing:** Checks whether data remains stable for the required time after the capture edge.
 
-| Metric | Worst corner | Pre-layout | Post-layout |
+### 14.1 Timing Analysis Configuration
+
+The STA script is available at [`timing/run_sta.tcl`](timing/run_sta.tcl).
+
+The timing logs for the 16 PVT corners are organized in:
+
+- [`timing/prelayout/`](timing/prelayout/) — pre-layout timing logs.
+- [`timing/postlayout/`](timing/postlayout/) — post-layout timing logs.
+
+The post-layout analysis uses extracted parasitics. The available logs and reports should be interpreted alongside the timing constraints and tool configuration used for each run.
+
+### 14.2 Reported Worst-Case Results at 15 ns
+
+The following values are reported in the 15 ns timing summary.
+
+| Timing Metric | Worst PVT Corner | Pre-layout Slack | Post-layout Slack |
 |---|---|---:|---:|
-| Setup slack | `ss_n40C_1v28` | +2.2256 ns | +1.9052 ns |
-| Hold slack | `ff_n40C_1v95` | +0.1844 ns | +0.1922 ns |
+| Worst setup slack | `ss_n40C_1v28` | +2.2256 ns | +1.9052 ns |
+| Worst hold slack | `ff_n40C_1v95` | +0.1844 ns | +0.1922 ns |
 
-All 16 corners have positive setup and hold slack at 15 ns. Full per-corner tables: [`evidence/sta_report_15ns.md`](evidence/sta_report_15ns.md).
+Positive slack indicates that the corresponding timing check passes under the constraints represented by the report.
 
-<p align="center"><img src="evidence/graphs/setup_slack_15ns.png" width="800"><br><em>Figure 14: Setup slack by PVT corner, pre- vs post-layout (15 ns).</em></p>
+The smallest reported setup slack is +1.9052 ns after layout, at `ss_n40C_1v28`. The smallest reported hold slack is +0.1844 ns before layout, at `ff_n40C_1v95`.
 
-<p align="center"><img src="evidence/graphs/hold_slack_15ns.png" width="800"><br><em>Figure 15: Hold slack by PVT corner, pre- vs post-layout (15 ns).</em></p>
+The full 15 ns timing summary is available in [`evidence/sta_report_15ns.md`](evidence/sta_report_15ns.md).
 
-Post-layout setup slack is lower than pre-layout in every corner (by 0.03–0.32 ns) because of wire parasitics. The reported worst paths are flop-to-flop (`_101_/Q` → `_100_/D` for setup at `ss_n40C_1v28`).
+### 14.3 Pre-layout Timing Graphs
 
-### 14.2 10 ns comparison
+The following graphs present the pre-layout timing results across the 16 PVT corners. They are intended to show how the timing metrics vary with process, voltage, and temperature.
 
-[`evidence/sta_report.md`](evidence/sta_report.md) lists a 10 ns analysis. Every 10 ns setup value is exactly 5.000 ns below the 15 ns value and all hold values are identical, so it corresponds to re-evaluating the same netlist and parasitics against a 10 ns clock constraint rather than a separate 10 ns implementation (the OpenLane run used `CLOCK_PERIOD 15.0`).
+#### 14.3.1 Worst Negative Slack (WNS)
 
-| Clock | Worst setup (post-layout) | Corner |
-|---|---:|---|
-| 10 ns | −3.0948 ns (violation; pre-layout −2.7744 ns) | `ss_n40C_1v28` |
-| 15 ns | +1.9052 ns | `ss_n40C_1v28` |
+![Pre-layout WNS across 16 PVT corners](evidence/graphs/pre_sta_wns.png)
 
-At 10 ns only `ss_n40C_1v28` fails setup; the next-worst corner (`ss_n40C_1v35`) has +0.9586 ns. Moving to 15 ns relaxes the constraint; it is not a hardware optimization.
+*Figure 14.1: Pre-layout WNS across 16 PVT corners at a 15 ns clock period.*
 
-<p align="center"><img src="evidence/graphs/setup_slack_10ns_vs_15ns.png" width="800"><br><em>Figure 16: Post-layout setup slack for 10 ns and 15 ns clock periods.</em></p>
+#### 14.3.2 Total Negative Slack (TNS)
 
-<p align="center"><img src="evidence/graphs/timing_summary.png" width="800"><br><em>Figure 17: Worst-case setup and hold slack summary.</em></p>
+![Pre-layout TNS across 16 PVT corners](evidence/graphs/pre_sta_tns.png)
 
-### 14.3 Caveats
-- The SDC defines only the clock and its uncertainty. There are no input or output delay constraints, so I/O paths are **not** covered by these results.
-- The logs contain Liberty warnings (`default_operating_condition ... not found` for the slow corner) and black-box warnings for tap/fill cells in the post-layout netlist.
-- Positive slack in these reports is not complete timing signoff.
+*Figure 14.2: Pre-layout TNS across 16 PVT corners at a 15 ns clock period.*
+
+#### 14.3.3 Setup Slack
+
+![Pre-layout setup slack across 16 PVT corners](evidence/graphs/pre_sta_setup_slack.png)
+
+*Figure 14.3: Pre-layout setup slack across 16 PVT corners at a 15 ns clock period.*
+
+#### 14.3.4 Hold Slack
+
+![Pre-layout hold slack across 16 PVT corners](evidence/graphs/pre_sta_hold_slack.png)
+
+*Figure 14.4: Pre-layout hold slack across 16 PVT corners at a 15 ns clock period.*
+
+### 14.4 Post-layout Timing Graphs
+
+The following graphs present the post-layout timing results across the same 16 PVT corners. Post-layout analysis includes extracted parasitics, allowing timing to be evaluated with the effects represented by the extracted layout data.
+
+#### 14.4.1 Worst Negative Slack (WNS)
+
+![Post-layout WNS across 16 PVT corners](evidence/graphs/post_sta_wns.png)
+
+*Figure 14.5: Post-layout WNS across 16 PVT corners at a 15 ns clock period.*
+
+#### 14.4.2 Total Negative Slack (TNS)
+
+![Post-layout TNS across 16 PVT corners](evidence/graphs/post_sta_tns.png)
+
+*Figure 14.6: Post-layout TNS across 16 PVT corners at a 15 ns clock period.*
+
+#### 14.4.3 Setup Slack
+
+![Post-layout setup slack across 16 PVT corners](evidence/graphs/post_sta_setup_slack.png)
+
+*Figure 14.7: Post-layout setup slack across 16 PVT corners at a 15 ns clock period.*
+
+#### 14.4.4 Hold Slack
+
+![Post-layout hold slack across 16 PVT corners](evidence/graphs/post_sta_hold_slack.png)
+
+*Figure 14.8: Post-layout hold slack across 16 PVT corners at a 15 ns clock period.*
+
+### 14.5 Interpretation of Results
+
+The reported setup and hold slack values are positive for all 16 PVT corners in the 15 ns timing summary.
+
+The worst reported setup slack decreases from +2.2256 ns before layout to +1.9052 ns after layout. This is consistent with the possibility of additional delay from interconnect parasitics.
+
+The worst reported hold slack changes from +0.1844 ns before layout to +0.1922 ns after layout. Setup and hold timing must be evaluated independently because they check different timing requirements.
+
+**WNS (Worst Negative Slack)** represents the worst negative slack for a timing check. A value of zero indicates that no negative slack is reported for that check under the applicable analysis.
+
+**TNS (Total Negative Slack)** represents the sum of negative slack across violating timing endpoints. It cannot be reliably reconstructed from a report that contains only the single worst path for each check.
+
+The available OpenLane summary for the 15 ns run reports WNS = 0.0 and TNS = 0.0 at its reported stages. Per-corner WNS and TNS graphs should therefore be interpreted only to the extent supported by the corresponding source reports; the individual worst-path summaries alone do not establish per-corner TNS.
+
+### 14.6 Timing Constraints and Limitations
+
+The results apply to the 15 ns clock-period configuration and the constraints used in the recorded analysis. They should not be generalized to other clock periods or operating conditions.
+
+The timing reports must also be interpreted in light of the constraints actually defined in the SDC. In particular, positive setup and hold slack alone does not demonstrate complete timing signoff for unconstrained input or output paths.
+
+The earlier 10 ns analysis is documented separately in [`evidence/sta_report.md`](evidence/sta_report.md). It represents a different timing constraint and should not be confused with a separate physical implementation.
+
+These STA results provide evidence of timing behavior under the analyzed conditions, but they do not, by themselves, establish complete foundry signoff.
 
 ## 15. Results Summary
 
