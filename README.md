@@ -18,7 +18,7 @@ A compact sequential digital circuit that flags *persistent* abnormal sensor rea
 13. [RTL-to-GDSII Physical Design (OpenLane)](#13-rtl-to-gdsii-physical-design-openlane)
 14. [Static Timing Analysis](#14-static-timing-analysis)
 15. [Results Summary](#15-results-summary)
-16. [Limitations and Future Improvements](#16-limitations-and-future-improvements)
+16. [Limitations](#16-limitations)
 17. [Conclusion](#17-conclusion)
 
 ---
@@ -94,17 +94,7 @@ The sensor, ADC, communication interface, processor and memory are outside the d
 
 ### 5.3 State transitions
 
-```mermaid
-stateDiagram-v2
-    [*] --> NORMAL
-    NORMAL --> WARNING: abnormal, count below limit
-    NORMAL --> CRITICAL: abnormal, count reaches limit (limit = 1)
-    WARNING --> WARNING: abnormal, count below limit
-    WARNING --> CRITICAL: abnormal, count reaches limit
-    WARNING --> NORMAL: normal sample
-    CRITICAL --> CRITICAL: abnormal (counter held, no new event)
-    CRITICAL --> NORMAL: normal sample
-```
+<img width="1483" height="845" alt="fsm_state_diagram" src="https://github.com/user-attachments/assets/fedfaf17-0c4a-4b6d-8cf4-52c7f389eba3" />
 
 `enable = 0` or `rst_n = 0` returns the FSM to NORMAL from any state.
 
@@ -138,9 +128,17 @@ sensor_anomaly_asic/
 │   ├── screenshots/
 │   │   ├── rtl_to_gls/          # 01–07: RTL, testbench, RTL sim, Yosys, GLS
 │   │   └── 01_floorplan.png … 06_final_layout_magic.png
-│   ├── graphs/                  # timing graphs generated from the STA data
 │   ├── sta_report.md            # 10 ns comparison table
 │   └── sta_report_15ns.md       # 15 ns comparison table
+│   ├── graphs/
+│   └── pre_sta_wns.png
+│   └── pre_sta_tns.png
+│   └── pre_sta_setup_slack.png
+│   └── pre_sta_hold_slack.png
+│   └── post_sta_wns.png
+│   └── post_sta_tns.png
+│   └── post_sta_setup_slack.png
+│   └── post_sta_hold_slack.png
 ├── results/
 │   ├── final_summary_report.csv
 │   ├── sensor_anomaly_detector.gds
@@ -493,13 +491,9 @@ These STA results provide evidence of timing behavior under the analyzed conditi
 | Setup / hold (15 ns, post-layout, worst corner) | +1.9052 ns / +0.1922 ns | `timing/postlayout` |
 | Power | Not recorded in the repository | — |
 
-## 16. Limitations and Future Improvements
+## 16. Limitations
 
-- No I/O timing constraints (`set_input_delay` / `set_output_delay`), so I/O timing is unverified.
-- No power report is stored.
-- The OpenLane launch command and the per-corner STA wrapper are not recorded; adding them would make the flow reproducible.
-- GLS and RTL simulation use directed tests only; no formal or randomized checking.
-- A tool-flow result is not foundry signoff, and the design has not been evaluated for deployment in safety-critical infrastructure.
+This project demonstrates the RTL-to-GDSII implementation of a persistence-based anomaly detector using the SKY130A technology. However, the design has not undergone foundry signoff or certification for safety-critical applications. Since structural health monitoring may influence decisions about building safety, further validation, reliability assessment, and application-specific testing would be necessary before real-world deployment.
 
 ## 17. Conclusion
 
