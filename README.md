@@ -127,6 +127,7 @@ stateDiagram-v2
 sensor_anomaly_asic/
 ├── rtl/sensor_anomaly_detector.v
 ├── tb/tb_sensor_anomaly_detector.v
+├── synthesis/sensor_anomaly_detector_netlist.v
 ├── constraints/sensor_anomaly_detector.sdc
 ├── openlane/
 │   ├── config.tcl
@@ -162,7 +163,7 @@ sensor_anomaly_asic/
 - **Event flag:** registered, defaults to 0 every cycle, set only on entry to CRITICAL.
 - **Outputs:** `warning = state[0]`, `critical = state[1]`.
 
-<p align="center"><img src="evidence/screenshots/rtl_to_gls/01_rtl_source.png" width="760"><br><em>Figure 1: RTL source — module interface and combinational/sequential logic.</em></p>
+<p align="center"><img src="evidence/screenshots/rtl_to_gls/01_rtl_source.png" width="1536"><br><em>Figure 1: RTL source — module interface and combinational/sequential logic.</em></p>
 
 ## 9. Functional Verification and Testbench
 
@@ -185,7 +186,7 @@ sensor_anomaly_asic/
 | 13 | `persistence_limit = 0` behaves as 1 |
 | 14 | `persistence_limit = 7`, no counter wrap |
 
-<p align="center"><img src="evidence/screenshots/rtl_to_gls/02_testbench_source.png" width="760"><br><em>Figure 2: Testbench — signals, DUT connection, clock generation and waveform dump.</em></p>
+<p align="center"><img src="evidence/screenshots/rtl_to_gls/02_testbench_source.png" width="1536"><br><em>Figure 2: Testbench — signals, DUT connection, clock generation and waveform dump.</em></p>
 
 ## 10. RTL Simulation (Icarus Verilog) and Waveforms (GTKWave)
 
@@ -208,11 +209,11 @@ gtkwave sensor_anomaly_detector.vcd
 ```
 Opens the waveform. Add `clk, rst_n, enable, sensor_data, threshold, persistence_limit, warning, critical, event_detected, state` and the internal `persistence_counter` (under `dut`).
 
-<!-- Add evidence/screenshots/rtl_to_gls/03a_rtl_simulation_terminal.png (RTL terminal PASS summary) here once captured. -->
+<img width="1536" height="787" alt="03a_rtl_terminal_output" src="https://github.com/user-attachments/assets/8588ecdc-6735-48a3-b683-4cb5aca6464c" />
 
 What the waveform should show: `persistence_counter` stepping up on consecutive abnormal samples and clearing on a normal sample, reset or disable; `warning` high only in state `01`; `critical` high in state `10`; `event_detected` a single-cycle pulse aligned with the first cycle of `critical`.
 
-<p align="center"><img src="evidence/screenshots/rtl_to_gls/03_rtl_simulation_waveform.png" width="760"><br><em>Figure 3: RTL simulation — GTKWave view of the design signals.</em></p>
+<p align="center"><img src="evidence/screenshots/rtl_to_gls/03_rtl_simulation_waveform.png" width="1536"><br><em>Figure 3: RTL simulation — GTKWave view of the design signals.</em></p>
 
 ## 11. Logic Synthesis (Yosys)
 
@@ -255,9 +256,9 @@ Exports the technology-mapped netlist without Yosys attributes; this is the netl
 
 The captured statistics for this run show **44 cells**, including two sequential-cell types.
 
-<p align="center"><img src="evidence/screenshots/rtl_to_gls/04_yosys_synthesis_statistics.png" width="640"><br><em>Figure 4: Yosys cell statistics from the workshop RTL-to-netlist run.</em></p>
+<p align="center"><img src="evidence/screenshots/rtl_to_gls/04_yosys_synthesis_statistics.png" width="1536"><br><em>Figure 4: Yosys cell statistics from the workshop RTL-to-netlist run.</em></p>
 
-<p align="center"><img src="evidence/screenshots/rtl_to_gls/05_synthesized_netlist_diagram.png" width="760"><br><em>Figure 5: Yosys-generated diagram of the synthesized logic (structural view, not a layout).</em></p>
+<p align="center"><img src="evidence/screenshots/rtl_to_gls/05_synthesized_netlist_diagram.png" width="2000"><br><em>Figure 5: Yosys-generated diagram of the synthesized logic (structural view, not a layout).</em></p>
 
 ### 11.2 OpenLane synthesis (separate run)
 
@@ -300,9 +301,9 @@ Opens the GLS waveform for comparison with the RTL waveform. Internal names may 
 
 In the captured run the testbench reports **14 tests run, 14 passed, 0 failed, 0 total errors**. This applies to that netlist, testbench and set of simulation models only.
 
-<p align="center"><img src="evidence/screenshots/rtl_to_gls/06_gate_level_simulation_terminal.png" width="700"><br><em>Figure 6: GLS terminal output — test summary.</em></p>
+<p align="center"><img src="evidence/screenshots/rtl_to_gls/06_gate_level_simulation_terminal.png" width="1536"><br><em>Figure 6: GLS terminal output — test summary.</em></p>
 
-<p align="center"><img src="evidence/screenshots/rtl_to_gls/07_gate_level_simulation_waveform.png" width="760"><br><em>Figure 7: GLS waveform in GTKWave (compare with Figure 3, the RTL simulation).</em></p>
+<p align="center"><img src="evidence/screenshots/rtl_to_gls/07_gate_level_simulation_waveform.png" width="1536"><br><em>Figure 7: GLS waveform in GTKWave (compare with Figure 3, the RTL simulation).</em></p>
 
 ## 13. RTL-to-GDSII Physical Design (OpenLane)
 
@@ -324,29 +325,29 @@ The OpenLane log warns that the core area is too small for the default power gri
 ### 13.2 Floorplanning
 Defines the 100 µm × 100 µm die and core, places the I/O pins according to `pin_order.cfg`, and inserts tap and end-cap cells (146 fixed cells in the placement log) before the power grid is generated.
 
-<p align="center"><img src="evidence/screenshots/01_floorplan.png" width="560"><br><em>Figure 8: Floorplan.</em></p>
+<p align="center"><img src="evidence/screenshots/01_floorplan.png" width="1536"><br><em>Figure 8: Floorplan.</em></p>
 
 ### 13.3 Placement
 Global placement positions the 56 synthesized cells, followed by resizer optimization and detailed placement. OpenLane reports 9 % placement utilization.
 
-<p align="center"><img src="evidence/screenshots/02_placement.png" width="560"><br><em>Figure 9: Standard-cell placement.</em></p>
+<p align="center"><img src="evidence/screenshots/02_placement.png" width="1536"><br><em>Figure 9: Standard-cell placement.</em></p>
 
 ### 13.4 Clock tree synthesis
 TritonCTS builds the clock distribution for net `clk` to the six flip-flops, followed by clock-net wire repair and resizer timing optimization.
 
-<p align="center"><img src="evidence/screenshots/03_cts.png" width="560"><br><em>Figure 10: Layout after clock tree synthesis.</em></p>
+<p align="center"><img src="evidence/screenshots/03_cts.png" width="1536"><br><em>Figure 10: Layout after clock tree synthesis.</em></p>
 
 ### 13.5 Routing
 Global routing (FastRoute) is followed by fill insertion and detailed routing (TritonRoute), which reports no DRC violations. SPEF parasitics are then extracted for post-layout STA. The summary report lists 2243 µm of wire and 505 vias.
 
-<p align="center"><img src="evidence/screenshots/04_routing.png" width="560"><br><em>Figure 11: Routed design.</em></p>
+<p align="center"><img src="evidence/screenshots/04_routing.png" width="1536"><br><em>Figure 11: Routed design.</em></p>
 
 ### 13.6 Final layout and GDSII
 Magic streams out the GDSII, KLayout regenerates a backup GDSII and runs an XOR comparison, and the flow then runs LVS, Magic DRC, antenna and CVC checks. The layout is in [`results/sensor_anomaly_detector.gds`](results/sensor_anomaly_detector.gds).
 
-<p align="center"><img src="evidence/screenshots/05_final_layout_klayout.png" width="560"><br><em>Figure 12: Final layout in KLayout.</em></p>
+<p align="center"><img src="evidence/screenshots/05_final_layout_klayout.png" width="1536"><br><em>Figure 12: Final layout in KLayout.</em></p>
 
-<p align="center"><img src="evidence/screenshots/06_final_layout_magic.png" width="560"><br><em>Figure 13: Final layout in Magic.</em></p>
+<p align="center"><img src="evidence/screenshots/06_final_layout_magic.png" width="1536"><br><em>Figure 13: Final layout in Magic.</em></p>
 
 ### 13.7 Physical verification (reported by the flow, run `sensor_run2`)
 
@@ -426,7 +427,6 @@ At 10 ns only `ss_n40C_1v28` fails setup; the next-worst corner (`ss_n40C_1v35`)
 - The OpenLane launch command and the per-corner STA wrapper are not recorded; adding them would make the flow reproducible.
 - GLS and RTL simulation use directed tests only; no formal or randomized checking.
 - A tool-flow result is not foundry signoff, and the design has not been evaluated for deployment in safety-critical infrastructure.
-- Confirm that the RTL, netlists, reports and GDSII all correspond to the same design revision.
 
 ## 17. Conclusion
 
