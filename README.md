@@ -1,9 +1,13 @@
 # Persistence-Based Anomaly Detector for Structural Health Monitoring
 
-A compact sequential digital circuit that flags *persistent* abnormal sensor readings, taken from Verilog RTL through simulation, synthesis, gate-level simulation, physical design and timing analysis to a GDSII layout on SkyWater SKY130A.
+A compact sequential digital circuit designed to detect persistent abnormal sensor readings for structural health monitoring. The design analyzes 8-bit sensor data against a programmable threshold and identifies sustained abnormal conditions using a finite-state machine (FSM), a persistence counter, and sequential logic. By requiring consecutive abnormal readings before triggering a critical alert, it helps distinguish persistent anomalies from temporary fluctuations.
+
 
 <img width="1672" height="941" alt="Coastal Structural Health Monitoring System" src="https://github.com/user-attachments/assets/b3bb52f8-0f25-4218-885f-f0fd80079596" />
 
+Implemented in Verilog HDL, the project follows a complete open-source ASIC design flow, including RTL simulation, waveform analysis, logic synthesis using Yosys, gate-level simulation, physical design using OpenLane, static timing analysis using OpenSTA, and final GDSII layout generation using the SkyWater SKY130A technology.
+
+The project demonstrates the practical application of digital design and VLSI implementation techniques to a structural health monitoring use case, providing a foundation for hardware-based detection of persistent abnormal sensor behavior.
 
 ## Table of Contents
 1. [Project Overview](#1-project-overview)
@@ -498,6 +502,9 @@ These STA results provide evidence of timing behavior under the analyzed conditi
 
 This project demonstrates the RTL-to-GDSII implementation of a persistence-based anomaly detector using the SKY130A technology. However, the design has not undergone foundry signoff or certification for safety-critical applications. Since structural health monitoring may influence decisions about building safety, further validation, reliability assessment, and application-specific testing would be necessary before real-world deployment.
 
+
 ## 17. Conclusion
 
-The project takes a small persistence-based anomaly detector from Verilog RTL to a GDSII layout on SKY130A with an open-source flow. The design was verified in RTL simulation and in gate-level simulation (14/14 tests in the captured GLS run), implemented with 56 standard cells in a configured 100 µm × 100 µm die, and reported clean by the flow's DRC, LVS, antenna and CVC checks. Post-layout STA at a 15 ns clock shows positive setup and hold slack in all 16 PVT corners under the stated constraints, with the limitations listed above.
+This project demonstrates the design and physical implementation of a persistence-based anomaly detector for structural health monitoring, from Verilog RTL to GDSII using the SKY130A technology. Through RTL simulation, gate-level verification, synthesis, physical design, and static timing analysis, the design was evaluated across the major stages of an open-source ASIC workflow.
+
+The final implementation contains 56 standard cells, and the recorded post-layout timing results show positive worst-case setup and hold slack at the configured 15 ns clock period. The project establishes a foundation for hardware-based detection of persistent abnormal sensor readings, while further validation and safety qualification remain necessary before real-world deployment.
