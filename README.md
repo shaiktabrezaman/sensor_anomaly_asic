@@ -358,13 +358,13 @@ Magic streams out the GDSII, KLayout regenerates a backup GDSII and runs an XOR 
 
 ### 13.7 Physical verification (reported by the flow, run `sensor_run2`)
 
-| Check | Reported result |
-|---|---|
-| TritonRoute DRC violations | 0 |
-| Magic DRC violations | 0 |
-| LVS errors | 0 |
-| Antenna violations | 0 |
-| CVC errors | 0 |
+| Check | Reported result | Source |
+|---|---|---|
+| TritonRoute DRC violations | 0 | OpenLane run log |
+| Magic DRC violations | 0 | OpenLane run log / summary |
+| LVS errors | 0 | OpenLane run log / summary |
+| Antenna violations | 0 | OpenLane run log / summary |
+| CVC errors | 0 | OpenLane run log / summary |
 
 
 These are results from the OpenLane flow, not independent foundry signoff.
@@ -388,7 +388,7 @@ The standard OpenSTA build within OpenLane v0.21 does not have the `read_vcd` co
 *   **Sequential Logic:** 9.57 µW (30.8%) — 6 Flip-Flops
 
 ### 13.8.3 Conclusion
-The total power consumption of **31.12 µW** confirms that the design is highly power-efficient and well within the thermal limits for typical IoT and sensor-interface applications. 
+The vectorless power analysis estimates a total power consumption of 31.124 µW, comprising 24.617 µW of internal power, 6.5053 µW of switching power, and 1.9785 nW of leakage power. The analysis uses a global switching activity of 10%. These results provide an initial estimate of the design's power characteristics under the analyzed conditions. Actual power consumption may vary with input activity and operating conditions, and further activity-based analysis would help refine the estimate.
 
 ![Power Report](evidence/screenshots/07_power_report.png)
 
@@ -521,6 +521,7 @@ These STA results provide evidence of timing behavior under the analyzed conditi
 | Wire length / vias | 2243 µm / 505 | summary CSV |
 | DRC / LVS / antenna / CVC | 0 / 0 / 0 / 0 | summary CSV, run log |
 | Setup / hold (15 ns, post-layout, worst corner) | +1.9052 ns / +0.1922 ns | `timing/postlayout` |
+| Power estimate | 31.12 µW total under assumed 10% switching activity | §13.8 Power Analysis |
 
 
 ## 16. Limitations
