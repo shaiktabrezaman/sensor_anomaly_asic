@@ -369,6 +369,29 @@ Magic streams out the GDSII, KLayout regenerates a backup GDSII and runs an XOR 
 
 These are results from the OpenLane flow, not independent foundry signoff.
 
+## 13.8. Power Analysis
+Power analysis was performed on the post-route netlist using OpenSTA and the extracted SPEF parasitics to estimate the dynamic and static power consumption of the design.
+
+### 13.8.1 Methodology
+The standard OpenSTA build within OpenLane v0.21 does not have the `read_vcd` command compiled. Therefore, a **statistical vectorless power analysis** was performed using a standard default global switching activity of **10% (0.1 toggle rate)** on all nets. 
+
+### 13.8.2 Power Results (Typical Corner: tt_025C_1v80)
+| Power Type | Power Consumption | Percentage | Description |
+| :--- | :--- | :--- | :--- |
+| **Internal Power** | 24.61 µW | 79.1% | Power consumed by the internal switching of the standard cells. |
+| **Switching Power** | 6.50 µW | 20.9% | Power consumed by charging/discharging the metal routing wires. |
+| **Leakage Power** | 1.98 nW | 0.0% | Static power drawn when the circuit is idle. |
+| **TOTAL POWER** | **31.12 µW** | **100%** | **Total power consumption of the chip.** |
+
+*Breakdown by Logic Type:*
+*   **Combinational Logic:** 21.55 µW (69.2%) — 50 cells
+*   **Sequential Logic:** 9.57 µW (30.8%) — 6 Flip-Flops
+
+### 13.8.3 Conclusion
+The total power consumption of **31.12 µW** confirms that the design is highly power-efficient and well within the thermal limits for typical IoT and sensor-interface applications. 
+
+![Power Report](evidence/screenshots/07_power_report.png)
+
 ## 14. Static Timing Analysis 
 
 Static Timing Analysis (STA) was performed to evaluate the setup and hold timing of the design across 16 process, voltage, and temperature (PVT) corners. This section focuses on the **15 ns clock-period analysis**, which corresponds to the configured OpenLane implementation.
